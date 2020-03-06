@@ -4,6 +4,8 @@ import wx
 import os
 import os.path as osp
 import shutil
+import pandas as pd
+from pandas import DataFrame as df
 
 
 class APP(wx.App):
@@ -42,12 +44,6 @@ class APP(wx.App):
         self.fps_text = wx.TextCtrl(self.panel, pos=(125,145), size=(100, 25))
         self.fps_bt = wx.Button(self.panel, label="Confirm", pos=(250, 145), size=(60, 25))
         self.fps_bt.Bind(wx.EVT_BUTTON, self.confirm_fps)
-
-        pic = "d:/McGill/Video Relationship Detection/small_demo/small_demo_frame_0.jpg"
-        if not osp.exists(pic):
-            exit(0)
-        img1 = wx.Image(pic, wx.BITMAP_TYPE_ANY)
-        img1 = img1.Scale(img1.GetWidth()/self.scale_factor, img1.GetHeight()/self.scale_factor)
         self.gallery = [
             wx.StaticBitmap(self.panel, -1, pos=(10,250)), wx.StaticBitmap(self.panel, -1, pos=(360,250)), wx.StaticBitmap(self.panel, -1, pos=(710,250)),
             wx.StaticBitmap(self.panel, -1, pos=(10,425)), wx.StaticBitmap(self.panel, -1, pos=(360,425)), wx.StaticBitmap(self.panel, -1, pos=(710,425)),
@@ -58,8 +54,6 @@ class APP(wx.App):
             wx.StaticText(self.panel, pos=(10,575)), wx.StaticText(self.panel, pos=(360,575)), wx.StaticText(self.panel, pos=(710,575)),
             wx.StaticText(self.panel, pos=(10,750)), wx.StaticText(self.panel, pos=(360,750)), wx.StaticText(self.panel, pos=(710,750)),
         ]
-        for x in self.gallery:
-            x.SetBitmap(wx.BitmapFromImage(img1))
 
         self.previous_bt = wx.Button(self.panel, label='Previous', pos=(10, 200), size=(75, 25))
         self.next_bt = wx.Button(self.panel, label='Next', pos=(110, 200), size=(75, 25))
@@ -73,10 +67,33 @@ class APP(wx.App):
         self.end_frame_input = wx.TextCtrl(self.panel, pos=(1075, 295), size=(75, 25))
 
         self.label_confirm_bt = wx.Button(self.panel, label="Confirm", pos=(1180, 270), size=(75, 25))
+        self.label_confirm_bt.Bind(wx.EVT_BUTTON, self.labelling)
+        self.label_confirm_bt.Disable()
 
         self.window.Show()
         self.window.Maximize()
         return True
+
+    def labelling(self, e):
+        self.warning.Show(False)
+        start = self.start_frame_input.GetValue()
+        end = self.end_frame_input.GetValue()
+        if start.isdigit() and end.isdigit() and int(start)<int(end) and int(start)>=0 and int(end)>=0:
+            self.warning.SetForegroundColour((0,0,0))
+            new_data = df({"video":[self.selected_video],"start_frame":[int(start)],"end_frame":[int(end)]})
+            result_path = osp.join(self.store_path, osp.basename(self.data_path).replace(" ", "_")+"_labels.csv")
+            if osp.exists(result_path):
+                old_data = pd.read_csv(result_path)
+                new_data = pd.concat([old_data, new_data], axis=0, sort=False)
+            new_data.to_csv(result_path, index=False)
+            self.warning.SetLabel("Action [start_frame: {}, end_frame: {}] has been recorded".format(start, end))
+            self.warning.Show(True)
+        else:
+            self.warning.SetLabel("Warning: INVALID Frame Number.")
+            self.warning.SetForegroundColour((255,0,0))
+            self.warning.Show(True)
+
+        self.window.Refresh()
 
     def confirm_store_path(self, e):
         self.warning.Show(False)
@@ -86,12 +103,15 @@ class APP(wx.App):
             self.warning.SetLabel("Warning: INVALID Store Path.")
             self.warning.SetForegroundColour((255,0,0))
             self.warning.Show(True)
+            self.store_path = None
+            self.label_confirm_bt.Disable()
         else:
-
             self.store_path_text.SetForegroundColour((0,255,0))
             self.warning.SetForegroundColour((0,0,0))
             self.warning.SetLabel("Store Path Set as: "+self.store_path)
             self.warning.Show(True)
+            if self.data_path is not None:
+                self.label_confirm_bt.Enable()
 
         self.window.Refresh()
 
@@ -103,6 +123,8 @@ class APP(wx.App):
             self.warning.SetLabel("Warning: INVALID Data Path.")
             self.warning.SetForegroundColour((255,0,0))
             self.warning.Show(True)
+            self.data_path = None
+            self.label_confirm_bt.Disable()
         else:
             self.data_path_text.SetForegroundColour((0,255,0))
             self.videos = list(filter(lambda x: x[-4:] in ['.avi', '.wav', '.mp4'], os.listdir(self.data_path)))
@@ -110,6 +132,8 @@ class APP(wx.App):
             self.warning.SetForegroundColour((0,0,0))
             self.warning.SetLabel("Data Path Set as: "+self.data_path)
             self.warning.Show(True)
+            if self.store_path is not None:
+                self.label_confirm_bt.Enable()
 
         self.window.Refresh()
 
