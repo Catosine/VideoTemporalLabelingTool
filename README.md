@@ -3,9 +3,9 @@ This is the repo for temporal video data labeling. It would record temporal labe
 
 ## Required Package  
 > Python == 3.7  
-> wxpython == 4.0.7.post2
-> pandas == 0.25.3 
-> opencv-python == 4.2.0.32
+> wxpython == 4.0.7.post2  
+> pandas == 0.25.3  
+> opencv-python == 4.2.0.32  
 
 ## Get Started    
 ```bash
