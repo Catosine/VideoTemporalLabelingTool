@@ -285,7 +285,12 @@ class APP(wx.App):
         if osp.exists(temp_frame_folder):
             shutil.rmtree(temp_frame_folder)
 
-        os.makedirs(temp_frame_folder, 0x0777)
+        if os.name == 'nt':
+            # windows
+            os.makedirs(temp_frame_folder, 0x777)
+        else:
+            # linux
+            os.mkdir(temp_frame_folder)
 
         self.sampling_freq = int(self.raw_video.get(cv2.CAP_PROP_FPS)/self.fps)
 
@@ -295,7 +300,7 @@ class APP(wx.App):
         while success:
             if idx%self.sampling_freq == 0:
                 savename = self.selected_video.split('.')[0]+"_frame_"+str(idx)+".jpg"
-                cv2.imwrite(osp.join(temp_frame_folder, savename), frame)
+                cv2.imwrite(osp.abspath(osp.join(temp_frame_folder, savename)), frame)
 
             idx+=1
             success, frame = self.raw_video.read()
