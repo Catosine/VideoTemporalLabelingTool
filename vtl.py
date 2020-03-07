@@ -20,7 +20,7 @@ class APP(wx.App):
         self.next_to_read_frame_idx = 0
         self.frame_idx = 0
         self.total_frames = 0
-        self.scale_factor = 5
+        self.scale_factor = 1.5
 
         self.window = wx.Frame(None, title="Video Temporal Labeling Tool", size=(500, 400))
         self.panel = wx.Panel(self.window)
@@ -44,15 +44,23 @@ class APP(wx.App):
         self.fps_text = wx.TextCtrl(self.panel, pos=(125,145), size=(100, 25))
         self.fps_bt = wx.Button(self.panel, label="Confirm", pos=(250, 145), size=(60, 25))
         self.fps_bt.Bind(wx.EVT_BUTTON, self.confirm_fps)
+        # self.gallery = [
+        #     wx.StaticBitmap(self.panel, -1, pos=(10,250)), wx.StaticBitmap(self.panel, -1, pos=(360,250)), wx.StaticBitmap(self.panel, -1, pos=(710,250)),
+        #     wx.StaticBitmap(self.panel, -1, pos=(10,425)), wx.StaticBitmap(self.panel, -1, pos=(360,425)), wx.StaticBitmap(self.panel, -1, pos=(710,425)),
+        #     wx.StaticBitmap(self.panel, -1, pos=(10,600)), wx.StaticBitmap(self.panel, -1, pos=(360,600)), wx.StaticBitmap(self.panel, -1, pos=(710,600))
+        #                 ]
         self.gallery = [
-            wx.StaticBitmap(self.panel, -1, pos=(10,250)), wx.StaticBitmap(self.panel, -1, pos=(360,250)), wx.StaticBitmap(self.panel, -1, pos=(710,250)),
-            wx.StaticBitmap(self.panel, -1, pos=(10,425)), wx.StaticBitmap(self.panel, -1, pos=(360,425)), wx.StaticBitmap(self.panel, -1, pos=(710,425)),
-            wx.StaticBitmap(self.panel, -1, pos=(10,600)), wx.StaticBitmap(self.panel, -1, pos=(360,600)), wx.StaticBitmap(self.panel, -1, pos=(710,600))
+            wx.StaticBitmap(self.panel, -1, pos=(10,250)), wx.StaticBitmap(self.panel, -1, pos=(450,250)),
+            wx.StaticBitmap(self.panel, -1, pos=(10,525)), wx.StaticBitmap(self.panel, -1, pos=(450,525)),
                         ]
+        # self.description = [
+        #     wx.StaticText(self.panel, pos=(10,400)), wx.StaticText(self.panel, pos=(360,400)), wx.StaticText(self.panel, pos=(710,400)),
+        #     wx.StaticText(self.panel, pos=(10,575)), wx.StaticText(self.panel, pos=(360,575)), wx.StaticText(self.panel, pos=(710,575)),
+        #     wx.StaticText(self.panel, pos=(10,750)), wx.StaticText(self.panel, pos=(360,750)), wx.StaticText(self.panel, pos=(710,750)),
+        # ]
         self.description = [
-            wx.StaticText(self.panel, pos=(10,400)), wx.StaticText(self.panel, pos=(360,400)), wx.StaticText(self.panel, pos=(710,400)),
-            wx.StaticText(self.panel, pos=(10,575)), wx.StaticText(self.panel, pos=(360,575)), wx.StaticText(self.panel, pos=(710,575)),
-            wx.StaticText(self.panel, pos=(10,750)), wx.StaticText(self.panel, pos=(360,750)), wx.StaticText(self.panel, pos=(710,750)),
+            wx.StaticText(self.panel, pos=(10,500)), wx.StaticText(self.panel, pos=(450,500)),
+            wx.StaticText(self.panel, pos=(10,700)), wx.StaticText(self.panel, pos=(450,700)),
         ]
 
         self.previous_bt = wx.Button(self.panel, label='Previous', pos=(10, 200), size=(75, 25))
@@ -261,19 +269,19 @@ class APP(wx.App):
         self.window.Refresh()
 
     def next_window(self, e):
-        self.frame_idx+=9
+        self.frame_idx+=len(self.gallery)
         if self.frame_idx < self.total_frames:
             self.update()
         else:
-            self.frame_idx-=9
+            self.frame_idx-=len(self.gallery)
         self.window.Layout()
 
     def previous_window(self, e):
-        self.frame_idx-=9
+        self.frame_idx-=len(self.gallery)
         if self.frame_idx >= 0:
             self.update()
         else:
-            self.frame_idx+=9
+            self.frame_idx+=len(self.gallery)
         self.window.Layout()
 
     def load_video_frame(self):
