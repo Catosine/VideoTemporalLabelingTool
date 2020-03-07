@@ -60,15 +60,15 @@ class APP(wx.App):
         self.previous_bt.Bind(wx.EVT_BUTTON, self.previous_window)
         self.next_bt.Bind(wx.EVT_BUTTON, self.next_window)
 
-        self.help_start_frame_input = wx.StaticText(self.panel, label="Start Frame: ", pos=(1000, 250), size=(75,25))
-        self.start_frame_input = wx.TextCtrl(self.panel, pos=(1075, 245), size=(75, 25))
+        self.help_start_frame_input = wx.StaticText(self.panel, label="Start Frame: ", pos=(1000, 200), size=(75,25))
+        self.start_frame_input = wx.TextCtrl(self.panel, pos=(1075, 195), size=(75, 25))
 
         self.help_end_frame_input = wx.StaticText(self.panel, label="End Frame: ", pos=(1000, 300), size=(75,25))
         self.end_frame_input = wx.TextCtrl(self.panel, pos=(1075, 295), size=(75, 25))
 
-        self.close_label_confirm_bt = wx.Button(self.panel, label="Close", pos=(1180, 270), size=(100, 25))
-        self.mid_label_confirm_bt = wx.Button(self.panel, label="Medium", pos=(1280, 270), size=(100, 25))
-        self.far_label_confirm_bt = wx.Button(self.panel, label="Far", pos=(1380, 270), size=(100, 25))
+        self.close_label_confirm_bt = wx.Button(self.panel, label="Closed", pos=(1180, 195), size=(100, 25))
+        self.mid_label_confirm_bt = wx.Button(self.panel, label="Medium", pos=(1180, 245), size=(100, 25))
+        self.far_label_confirm_bt = wx.Button(self.panel, label="Far", pos=(1180, 295), size=(100, 25))
         self.close_label_confirm_bt.Bind(wx.EVT_BUTTON, self.close_labelling)
         self.mid_label_confirm_bt.Bind(wx.EVT_BUTTON, self.mid_labelling)
         self.far_label_confirm_bt.Bind(wx.EVT_BUTTON, self.far_labelling)
