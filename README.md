@@ -2,7 +2,7 @@
 This is the repo for temporal video data labeling. It would record temporal labels for video and store the corresponding start and end frame index.  
 
 ## Required Package  
-> Python == 3.7  
+> Python == 3.7.0  
 > wxpython == 4.0.7.post2  
 > pandas == 0.25.3  
 > opencv-python == 4.2.0.32  

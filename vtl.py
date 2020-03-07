@@ -66,27 +66,75 @@ class APP(wx.App):
         self.help_end_frame_input = wx.StaticText(self.panel, label="End Frame: ", pos=(1000, 300), size=(75,25))
         self.end_frame_input = wx.TextCtrl(self.panel, pos=(1075, 295), size=(75, 25))
 
-        self.label_confirm_bt = wx.Button(self.panel, label="Confirm", pos=(1180, 270), size=(75, 25))
-        self.label_confirm_bt.Bind(wx.EVT_BUTTON, self.labelling)
-        self.label_confirm_bt.Disable()
+        self.close_label_confirm_bt = wx.Button(self.panel, label="Close", pos=(1180, 270), size=(100, 25))
+        self.mid_label_confirm_bt = wx.Button(self.panel, label="Medium", pos=(1280, 270), size=(100, 25))
+        self.far_label_confirm_bt = wx.Button(self.panel, label="Far", pos=(1380, 270), size=(100, 25))
+        self.close_label_confirm_bt.Bind(wx.EVT_BUTTON, self.close_labelling)
+        self.mid_label_confirm_bt.Bind(wx.EVT_BUTTON, self.mid_labelling)
+        self.far_label_confirm_bt.Bind(wx.EVT_BUTTON, self.far_labelling)
+        self.close_label_confirm_bt.Disable()
+        self.mid_label_confirm_bt.Disable()
+        self.far_label_confirm_bt.Disable()
 
         self.window.Show()
         self.window.Maximize()
         return True
 
-    def labelling(self, e):
+    def far_labelling(self, e):
         self.warning.Show(False)
         start = self.start_frame_input.GetValue()
         end = self.end_frame_input.GetValue()
         if start.isdigit() and end.isdigit() and int(start)<int(end) and int(start)>=0 and int(end)>=0:
             self.warning.SetForegroundColour((0,0,0))
-            new_data = df({"video":[self.selected_video],"start_frame":[int(start)],"end_frame":[int(end)]})
+            new_data = df({"video":[self.selected_video],"start_frame":[int(start)],"end_frame":[int(end)],"type":["far"]})
             result_path = osp.join(self.store_path, osp.basename(self.data_path).replace(" ", "_")+"_labels.csv")
             if osp.exists(result_path):
                 old_data = pd.read_csv(result_path)
                 new_data = pd.concat([old_data, new_data], axis=0, sort=False)
             new_data.to_csv(result_path, index=False)
-            self.warning.SetLabel("Action [start_frame: {}, end_frame: {}] has been recorded".format(start, end))
+            self.warning.SetLabel("Action {} [start_frame: {}, end_frame: {}] has been recorded".format("(far-shot)",start, end))
+            self.warning.Show(True)
+        else:
+            self.warning.SetLabel("Warning: INVALID Frame Number.")
+            self.warning.SetForegroundColour((255,0,0))
+            self.warning.Show(True)
+
+        self.window.Refresh()
+
+    def mid_labelling(self, e):
+        self.warning.Show(False)
+        start = self.start_frame_input.GetValue()
+        end = self.end_frame_input.GetValue()
+        if start.isdigit() and end.isdigit() and int(start)<int(end) and int(start)>=0 and int(end)>=0:
+            self.warning.SetForegroundColour((0,0,0))
+            new_data = df({"video":[self.selected_video],"start_frame":[int(start)],"end_frame":[int(end)],"type":["mid"]})
+            result_path = osp.join(self.store_path, osp.basename(self.data_path).replace(" ", "_")+"_labels.csv")
+            if osp.exists(result_path):
+                old_data = pd.read_csv(result_path)
+                new_data = pd.concat([old_data, new_data], axis=0, sort=False)
+            new_data.to_csv(result_path, index=False)
+            self.warning.SetLabel("Action {} [start_frame: {}, end_frame: {}] has been recorded".format("(medium-shot)",start, end))
+            self.warning.Show(True)
+        else:
+            self.warning.SetLabel("Warning: INVALID Frame Number.")
+            self.warning.SetForegroundColour((255,0,0))
+            self.warning.Show(True)
+
+        self.window.Refresh()
+
+    def close_labelling(self, e):
+        self.warning.Show(False)
+        start = self.start_frame_input.GetValue()
+        end = self.end_frame_input.GetValue()
+        if start.isdigit() and end.isdigit() and int(start)<int(end) and int(start)>=0 and int(end)>=0:
+            self.warning.SetForegroundColour((0,0,0))
+            new_data = df({"video":[self.selected_video],"start_frame":[int(start)],"end_frame":[int(end)],"type":["close"]})
+            result_path = osp.join(self.store_path, osp.basename(self.data_path).replace(" ", "_")+"_labels.csv")
+            if osp.exists(result_path):
+                old_data = pd.read_csv(result_path)
+                new_data = pd.concat([old_data, new_data], axis=0, sort=False)
+            new_data.to_csv(result_path, index=False)
+            self.warning.SetLabel("Action {} [start_frame: {}, end_frame: {}] has been recorded".format("(close-shot)",start, end))
             self.warning.Show(True)
         else:
             self.warning.SetLabel("Warning: INVALID Frame Number.")
@@ -104,14 +152,18 @@ class APP(wx.App):
             self.warning.SetForegroundColour((255,0,0))
             self.warning.Show(True)
             self.store_path = None
-            self.label_confirm_bt.Disable()
+            self.close_label_confirm_bt.Disable()
+            self.mid_label_confirm_bt.Disable()
+            self.far_label_confirm_bt.Disable()
         else:
             self.store_path_text.SetForegroundColour((0,255,0))
             self.warning.SetForegroundColour((0,0,0))
             self.warning.SetLabel("Store Path Set as: "+self.store_path)
             self.warning.Show(True)
             if self.data_path is not None:
-                self.label_confirm_bt.Enable()
+                self.close_label_confirm_bt.Enable()
+                self.mid_label_confirm_bt.Enable()
+                self.far_label_confirm_bt.Enable()
 
         self.window.Refresh()
 
@@ -124,27 +176,35 @@ class APP(wx.App):
             self.warning.SetForegroundColour((255,0,0))
             self.warning.Show(True)
             self.data_path = None
-            self.label_confirm_bt.Disable()
+            self.close_label_confirm_bt.Disable()
+            self.mid_label_confirm_bt.Disable()
+            self.far_label_confirm_bt.Disable()
         else:
             self.data_path_text.SetForegroundColour((0,255,0))
-            self.videos = list(filter(lambda x: x[-4:] in ['.avi', '.wav', '.mp4'], os.listdir(self.data_path)))
+            self.videos = sorted(list(filter(lambda x: x[-4:] in ['.avi', '.wav', '.mp4'], os.listdir(self.data_path))))
             self.video_data_choice.SetItems(self.videos)
             self.warning.SetForegroundColour((0,0,0))
             self.warning.SetLabel("Data Path Set as: "+self.data_path)
             self.warning.Show(True)
             if self.store_path is not None:
-                self.label_confirm_bt.Enable()
+                self.close_label_confirm_bt.Enable()
+                self.mid_label_confirm_bt.Enable()
+                self.far_label_confirm_bt.Enable()
 
         self.window.Refresh()
 
     def confirm_fps(self, e):
         self.warning.Show(False)
+        self.fps_text.SetForegroundColour((0,0,0))
         if not self.fps_text.GetValue().isdigit():
             self.warning.SetLabel("Warning: INVALID FPS.")
             self.warning.SetForegroundColour((255,0,0))
+            self.fps_text.SetForegroundColour((255,0,0))
             self.warning.Show(True)
+            self.fps = None
         else:
             self.fps = int(self.fps_text.GetValue())
+            self.fps_text.SetForegroundColour((0,255,0))
             self.warning.SetForegroundColour((0,0,0))
             self.warning.SetLabel("FPS Set as: "+str(self.fps))
             self.warning.Show(True)
@@ -245,10 +305,17 @@ class APP(wx.App):
         self.frame_idx = 0
         self.total_frames = len(self.frames)
 
+    def error(self):
+        self.warning.SetForegroundColour((255,0,0))
+        self.warning.SetLabel("Something goes wrong and the program crased")
+        self.warning.Show(True)
+        self.window.Refresh()
+
 
 if __name__ == '__main__':
     try:
         app = APP()
         app.MainLoop()
     except:
+        app.error()
         exit(0)
