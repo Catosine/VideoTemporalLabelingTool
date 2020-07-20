@@ -1,5 +1,6 @@
 # Video Temporal Labeling Tools  
 This is the repo for temporal video data labeling. It would record temporal labels for video and store the corresponding start and end frame index.  
+![avatar](./UI.png)
 
 ## Required Package  
 > Python == 3.7.0  
