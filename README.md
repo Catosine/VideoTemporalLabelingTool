@@ -19,6 +19,11 @@ cd VideoTemporalLabelingTool
 # install required packages
 pip install -r requirements.txt
 
+# or you may go with simple version
+pip install wxpython
+pip install pandas
+pip install opencv-python
+
 # run the code
 python3 app.py
 ```
