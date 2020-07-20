@@ -3,7 +3,7 @@ import service
 
 
 class Layout(wx.Frame):
-    def __init__(self, parent=None, size=(1200, 750), title="Video Temporal Labeling Tool"):
+    def __init__(self, parent=None, size=(1000, 650), title="Video Temporal Labeling Tool"):
         wx.Frame.__init__(self, parent=parent, size=size, title=title)
         self.service = service.Service(self)
 
@@ -97,7 +97,7 @@ class Layout(wx.Frame):
         controlStaticBox = wx.StaticBox(self, label="Frame Control")
         controlStaticBoxSizer = wx.StaticBoxSizer(controlStaticBox, wx.VERTICAL)
 
-        prevNFrame = wx.Button(self, label="-FPS")
+        prevNFrame = wx.Button(self, label="-FPI")
         prevNFrame.Bind(wx.EVT_BUTTON, lambda e: self.service.button_event(e, "prevNFrame"))
 
         prevFrame = wx.Button(self, label="-1")
@@ -106,7 +106,7 @@ class Layout(wx.Frame):
         nextFrame = wx.Button(self, label="+1")
         nextFrame.Bind(wx.EVT_BUTTON, lambda e: self.service.button_event(e, "nextFrame"))
 
-        nextNFrame = wx.Button(self, label="+FPS")
+        nextNFrame = wx.Button(self, label="+FPI")
         nextNFrame.Bind(wx.EVT_BUTTON, lambda e: self.service.button_event(e, "nextNFrame"))
 
         buttonStyle = wx.EXPAND | wx.ALL
@@ -143,6 +143,9 @@ class Layout(wx.Frame):
         selectFar = wx.Button(self, label="Far")
         selectFar.Bind(wx.EVT_BUTTON, lambda e: self.service.button_event(e, "selectFar"))
 
+        saveLabel = wx.Button(self, label="Save")
+        saveLabel.Bind(wx.EVT_BUTTON, lambda e: self.service.button_event(e, "saveLabel"))
+
         selectTypeBox = wx.BoxSizer()
         selectTypeBox.Add(selectClose, 1, buttonStyle, border=5)
         selectTypeBox.Add(selectMid, 1, buttonStyle, border=5)
@@ -150,6 +153,7 @@ class Layout(wx.Frame):
 
         labelBoxSizer.Add(selectLabelBox, 1, wx.EXPAND, border=5)
         labelBoxSizer.Add(selectTypeBox, 1, wx.EXPAND, border=5)
+        labelBoxSizer.Add(saveLabel, 1, wx.EXPAND | wx.ALL, border=5)
 
 
         # info box
@@ -189,6 +193,8 @@ class Layout(wx.Frame):
         self.SetSizer(mainBox)
         self.Centre()
 
+        # accelerator table
+
 
     def initMenu(self):
         menuBar = wx.MenuBar()
@@ -203,7 +209,7 @@ class Layout(wx.Frame):
         fpsMenu.Append(wx.MenuItem(fileMenu, id=14, text="20", kind=wx.ITEM_RADIO))
         fpsMenu.Append(wx.MenuItem(fileMenu, id=15, text="30", kind=wx.ITEM_RADIO))
 
-        fileMenu.Append(wx.ID_ANY, "FPS", fpsMenu)
+        fileMenu.Append(wx.ID_ANY, "Frame Per Interval", fpsMenu)
 
         menuBar.Append(fileMenu, title="Setting")
 

@@ -24,6 +24,7 @@ class Service:
         self.currFrame = 0
         self.labelStart = 0
         self.labelEnd = 0
+        self.type = None
 
     def updateInputInfo(self, data_path, store_path):
         if osp.exists(data_path):
@@ -58,6 +59,7 @@ class Service:
         totVideo = len(self.videoLists)
         self.currVideo = totVideo if self.currVideo > totVideo else self.currVideo
         self.currVideo = 0 if self.currVideo < 0 else self.currVideo
+        self.ui.selectVideo.Selection = self.currVideo
         self.cap = cv2.VideoCapture(osp.join(self.dataset_path, self.videoLists[self.currVideo]))
         self.totFrame = int(self.cap.get(7))
         self.currFrame = 0
@@ -65,6 +67,7 @@ class Service:
         self.labelEnd = 0
         self.ui.updateStartLabel(0)
         self.ui.updateEndLabel(0)
+        self.type = None
         self.ui.videoFrame.SetLabel("0")
         self.updateFrameN()
         self.ui.updateMessage("Select video: {}".format(self.videoLists[self.currVideo]))
@@ -123,6 +126,8 @@ class Service:
             self.storeLabel("mid")
         elif evt_id == "selectFar":
             self.storeLabel("far")
+        elif evt_id == "saveLabel":
+            self.saveLabel()
         else:
             self.ui.updateError("Unsupported Button")
 
@@ -147,14 +152,30 @@ class Service:
         else:
             raise NotImplemented
 
-    def storeLabel(self, type):
+    def readLabel(self):
         if self.labelStart < self.labelEnd:
-            new_data = df({"video":[self.videoLists[self.currVideo]],"start_frame":[self.labelStart],"end_frame":[self.labelEnd],"type":[type]})
+            label = df({"video":[self.videoLists[self.currVideo]],"start_frame":[self.labelStart],"end_frame":[self.labelEnd],"type":[self.type]})
+            msg = "Action [{}, {}] is recorded".format(self.labelStart, self.labelEnd)
+            if self.type:
+                msg += " as {} shot".format(self.type)
+            self.ui.updateMessage(msg)
+            return label
+        else:
+            self.ui.updateError("Action [{},{}] is NOT recorded: start should be less than end".format(self.labelStart, self.labelEnd))
+            return None
+
+    def storeLabel(self, type=None):
+        self.type = type
+        self.ui.updateMessage("Action type is selected as {}".format(type))
+
+    def saveLabel(self):
+        label = self.readLabel()
+        if label is not None:
             result_path = osp.join(self.store_path, osp.basename(self.dataset_path).replace(" ", "_")+"_labels.csv")
             if osp.exists(result_path):
                 old_data = pd.read_csv(result_path)
-                new_data = pd.concat([old_data, new_data], axis=0, sort=False)
-            new_data.to_csv(result_path, index=False)
-            self.ui.updateMessage("Action [{},{}] type {} is recorded".format(self.labelStart, self.labelEnd, type))
+                label = pd.concat([old_data, label], axis=0, sort=False)
+            label.to_csv(result_path, index=False)
         else:
-            self.ui.updateError("Action [{},{}] type {} is NOT recorded: start should be less than end".format(self.labelStart, self.labelEnd, type))
+
+            self.ui.updateError("No action selected")

@@ -19,7 +19,7 @@ cd VideoTemporalLabelingTool
 pip install -r requirements.txt
 
 # run the code
-python3 vtl.py
+python3 app.py
 ```
 
 ## License  

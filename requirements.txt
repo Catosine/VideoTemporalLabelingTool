@@ -1,3 +1,0 @@
-pandas==1.0.1
-wxpython==4.0.7.post2
-opencv-python==4.2.0.32
