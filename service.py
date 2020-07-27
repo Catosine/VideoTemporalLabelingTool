@@ -25,6 +25,7 @@ class Service:
         self.labelStart = 0
         self.labelEnd = 0
         self.type = None
+        self.actionType = "tripping"
 
     def updateInputInfo(self, data_path, store_path):
         if osp.exists(data_path):
@@ -128,6 +129,9 @@ class Service:
             self.storeLabel("far")
         elif evt_id == "saveLabel":
             self.saveLabel()
+        elif evt_id == "selectAction":
+            self.actionType = e.GetString()
+            self.ui.updateMessage("Action Type: {} is selected.".format(self.actionType))
         else:
             self.ui.updateError("Unsupported Button")
 
@@ -154,8 +158,8 @@ class Service:
 
     def readLabel(self):
         if self.labelStart < self.labelEnd:
-            label = df({"video":[self.videoLists[self.currVideo]],"start_frame":[self.labelStart],"end_frame":[self.labelEnd],"type":[self.type]})
-            msg = "Action [{}, {}] is recorded".format(self.labelStart, self.labelEnd)
+            label = df({"video":[self.videoLists[self.currVideo]],"start_frame":[self.labelStart],"end_frame":[self.labelEnd],"type":[self.type],"action":[self.actionType]})
+            msg = "{} action [{}, {}] is recorded".format(self.actionType.upper(), self.labelStart, self.labelEnd)
             if self.type:
                 msg += " as {} shot".format(self.type)
             self.ui.updateMessage(msg)
@@ -177,5 +181,4 @@ class Service:
                 label = pd.concat([old_data, label], axis=0, sort=False)
             label.to_csv(result_path, index=False)
         else:
-
             self.ui.updateError("No action selected")

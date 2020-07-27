@@ -3,7 +3,7 @@ import service
 
 
 class Layout(wx.Frame):
-    def __init__(self, parent=None, size=(1000, 650), title="Video Temporal Labeling Tool"):
+    def __init__(self, parent=None, size=(1000, 700), title="Video Temporal Labeling Tool"):
         wx.Frame.__init__(self, parent=parent, size=size, title=title)
         self.service = service.Service(self)
 
@@ -155,6 +155,14 @@ class Layout(wx.Frame):
         labelBoxSizer.Add(selectTypeBox, 1, wx.EXPAND, border=5)
         labelBoxSizer.Add(saveLabel, 1, wx.EXPAND | wx.ALL, border=5)
 
+        # action type selection
+        actionTypeStaticBox = wx.StaticBox(self, label="Action Type")
+        self.actionTypeChoice = wx.Choice(self)
+        self.actionTypeChoice.Bind(wx.EVT_CHOICE, lambda x: self.service.button_event(x, "selectAction"))
+        self.actionTypeChoice.SetItems(['tripping', 'faceoff'])
+        self.actionTypeChoice.Selection = 0
+        actionTypeStaticBoxSizer = wx.StaticBoxSizer(actionTypeStaticBox)
+        actionTypeStaticBoxSizer.Add(self.actionTypeChoice, 1, wx.EXPAND, border=5)
 
         # info box
         infoBox = wx.BoxSizer(wx.VERTICAL)
@@ -163,6 +171,7 @@ class Layout(wx.Frame):
         infoBox.Add(videoControlBoxSizer, 2, infoBoxStyle, border=5)
         infoBox.Add(labelInfoBoxSizer, 2, infoBoxStyle, border=5)
         infoBox.Add(controlStaticBoxSizer, 2, infoBoxStyle, border=5)
+        infoBox.Add(actionTypeStaticBoxSizer, 1, infoBoxStyle, border=5)
         infoBox.Add(labelBoxSizer, 3, infoBoxStyle, border=5)
 
         # display box
